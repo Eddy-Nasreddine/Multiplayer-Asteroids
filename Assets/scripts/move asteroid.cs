@@ -6,39 +6,44 @@ using UnityEngine;
 
 public class moveasteroid : MonoBehaviour
 {
-    private float speed;
-    private Vector2 movingDirection;
-    private Vector2 movingDirection2;
+    public float SpeedMin = 0.5f;
+    public float SpeedMax = 7f;
+    public int AsteroidsAmount = 10;
     public GameObject asteroid;
+    private float rotation = 0;
+
+    private GameObject[] asteroids;
 
     // Start is called before the first frame update
     void Start()
     {
-        speed = UnityEngine.Random.Range(0.1f, 5f);
-        float directionDegrees = UnityEngine.Random.Range(0f, 260f);
-        movingDirection.x = Mathf.Cos(directionDegrees);
-        movingDirection.y = Mathf.Sin(directionDegrees);
 
-        directionDegrees = UnityEngine.Random.Range(0f, 260f);
-        movingDirection2.x = Mathf.Cos(directionDegrees);
-        movingDirection2.y = Mathf.Sin(directionDegrees);
+        for (int i = 0; i < AsteroidsAmount; i++)
+        {
+            GameObject roid = GameObject.Instantiate(asteroid);
+            float speed = UnityEngine.Random.Range(SpeedMin, SpeedMax);
+            float directionDegrees = UnityEngine.Random.Range(0f, 260f);
+            float xVelocity = Mathf.Cos(directionDegrees);
+            float yVelocity = Mathf.Sin(directionDegrees);
 
-        Vector2 screenMiddle = new Vector2(0,0);
-        GameObject asteroid1 = GameObject.Instantiate(asteroid);
 
-        Rigidbody2D rb1 = asteroid1.GetComponent<Rigidbody2D>();
-        rb1.velocity = movingDirection * speed;
-        asteroid1.transform.position = screenMiddle;
+            float x = UnityEngine.Random.Range(0f, 1f);
+            float y = UnityEngine.Random.Range(0f, 1f);
+            Vector3 viewportPoint = new Vector3(x, y, -Camera.main.transform.position.z);
 
-        GameObject asteroid2 = GameObject.Instantiate(asteroid);
-        Rigidbody2D rb2 = asteroid2.GetComponent<Rigidbody2D>();
-        rb2.velocity = movingDirection2 * speed;
-        asteroid2.transform.position = screenMiddle;
+            roid.transform.position = Camera.main.ViewportToWorldPoint(viewportPoint);
 
+            Rigidbody2D rb = roid.GetComponent<Rigidbody2D>();
+            rb.velocity = new Vector2(xVelocity, yVelocity) * speed;
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
+       
+        //Debug.Log(Camera.main.WorldToViewportPoint(objlocation));
+
+
     }
 }
