@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Security.Cryptography;
+using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Profiling;
 using static UnityEngine.GridBrushBase;
@@ -19,10 +21,25 @@ public class moveasteroid : MonoBehaviour
     public float SpeedMin = 0.5f;
     public float SpeedMax = 7f;
     public int AsteroidsAmount = 10;
-    public GameObject asteroid;
 
-    private List<GameObject> asteroids = new List<GameObject> { };
-    private List<int> asteroidsState = new List<int>(); // 0 = entering screen  1 = onscreen
+    public GameObject asteroidObj;
+    private List<AsteroidData> asteroids = new List<AsteroidData> { };
+
+
+
+
+    private class AsteroidData
+    {
+        public GameObject asteroid;
+        public int state = 0;  // 0 = entering screen  1 = onscreen
+        public int split = 0;
+
+        public AsteroidData(GameObject roid, int splited = 0)
+        {
+            asteroid = roid;
+            split = splited;
+        }
+    }
 
 
 
@@ -76,13 +93,52 @@ public class moveasteroid : MonoBehaviour
         return new Vector2(xVelocity, yVelocity);
     }
 
+
+    List<AsteroidData> SplitAsteroid(GameObject asteroid)
+    {
+        Vector2 pos = asteroid.transform.position;
+        float rotationradians = (asteroid.transform.rotation.eulerAngles.z % 360) * Mathf.Deg2Rad;
+        float rotationRight = rotationradians + (Mathf.PI / 2);
+        float rotationLeft = rotationradians - (Mathf.PI / 2);
+        Vector2 rightVec = new Vector2(Mathf.Cos(rotationRight), Mathf.Sin(rotationRight));
+        Vector2 leftVec = new Vector2(Mathf.Cos(rotationLeft), Mathf.Sin(rotationLeft));
+
+        Vector2 size = asteroid.GetComponent<Renderer>().bounds.size / 1.5f;
+
+        GameObject roid1 = GameObject.Instantiate(asteroidObj);
+        roid1.transform.position = (leftVec * (size / 5) ) + pos;
+        Rigidbody2D rb = roid1.GetComponent<Rigidbody2D>();
+        float speed = UnityEngine.Random.Range(SpeedMin, SpeedMax);
+        rb.velocity = leftVec * speed;
+
+        GameObject roid2 = GameObject.Instantiate(asteroidObj);
+        roid2.transform.position = (rightVec * (size / 5)) + pos;
+        rb = roid2.GetComponent<Rigidbody2D>();
+        speed = UnityEngine.Random.Range(SpeedMin, SpeedMax);
+        rb.velocity = rightVec * speed;
+
+        roid1.GetComponent<rotate>().dead = 2;
+        roid2.GetComponent<rotate>().dead = 2;
+        roid1.GetComponent<CircleCollider2D>().enabled = false;
+        roid2.GetComponent<CircleCollider2D>().enabled = false;
+
+        roid1.transform.localScale = roid1.transform.localScale / 1.5f;
+        roid2.transform.localScale = roid2.transform.localScale / 1.5f;
+
+        roid1.GetComponent<SpriteRenderer>().material.color = Color.black;
+        roid2.GetComponent<SpriteRenderer>().color = Color.black;
+
+        return new List<AsteroidData> { new AsteroidData(roid1,1), new AsteroidData(roid2,1) };
+    }
+
+
     // Start is called before the first frame update
     void Start()
     {
 
         for (int i = 0; i < AsteroidsAmount; i++)
         {
-            GameObject roid = GameObject.Instantiate(asteroid);
+            GameObject roid = GameObject.Instantiate(asteroidObj);
             float speed = UnityEngine.Random.Range(SpeedMin, SpeedMax);
             Vector3 pos = RandomLocationOffScreen();
 
@@ -93,36 +149,49 @@ public class moveasteroid : MonoBehaviour
 
             Rigidbody2D rb = roid.GetComponent<Rigidbody2D>();
             rb.velocity = velocity * speed;
-            asteroids.Add(roid);
-            asteroidsState.Add(0);
+            asteroids.Add(new AsteroidData(roid));
+
         }
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        //bug if a asteroid spawns outside and then gets bumped by another befor it gos in the screen it will drift off screen forever
         for (int i = 0; i < asteroids.Count; i++)
         {
-            GameObject roid = asteroids[i];
+            GameObject roid = asteroids[i].asteroid;
 
             Vector3 size = roid.GetComponent<Renderer>().bounds.size;
             Vector3 pos = Camera.main.WorldToViewportPoint(roid.transform.position);
+            int dead = roid.GetComponent<rotate>().dead;
+            if (dead == 1)
+            {
+                roid.GetComponent<rotate>().dead = 0;
+                asteroids.AddRange(SplitAsteroid(roid));
+                //UnityEngine.Object.Destroy(roid);
+                //asteroids.RemoveAt(i);
+                continue;
+            }
 
-
-
-            if (asteroidsState[i] == 0) //dont despawn asteroids when they havent been on screen yet
+            if (asteroids[i].state == 0) //dont despawn asteroids when they havent been on screen yet
             {
                 if (!(pos.x < 0 | pos.x > 1 | pos.y < 0 | pos.y > 1))
                 {
-                    asteroidsState[i] = 1;
+                    asteroids[i].state = 1;
                 }
 
                 continue;
             }
             if (pos.x < 0 | pos.x > 1 | pos.y < 0 | pos.y > 1)
             {
-                asteroidsState[i] = 0;
+                if (asteroids[i].asteroid.GetComponent<rotate>().dead == 2)
+                {
+                    UnityEngine.Object.Destroy(roid);
+                    asteroids.RemoveAt(i);
+                    continue;
+                }
+                asteroids[i].state = 0;
                 pos = RandomLocationOffScreen();
                 Vector2 velocity = RandomValidVelocity(pos);
                 //Debug.Log("pos: " + pos + " velocity: " + velocity);
