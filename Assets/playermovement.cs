@@ -7,7 +7,7 @@ public class playermovement : MonoBehaviour
     [SerializeField] private float acceleration = 10f;
     [SerializeField] private float maxVelocity = 10f;
     public Rigidbody2D rb;
-    [SerializeField]  public float rotationSpeed = 180f;
+    [SerializeField] private float rotationSpeed = 180f;
     [SerializeField] private float bulletspeed = 8f;
     private bool isAccelerating = false;
     // Start is called before the first frame update
