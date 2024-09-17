@@ -51,6 +51,11 @@ public class playermovement : MonoBehaviour
             rb.velocity = Vector2.ClampMagnitude(rb.velocity, maxVelocity);
 
         }
+        else {
+
+            rb.velocity = rb.velocity / 1.05f;
+
+        }
     }
     private void shipAcceleration()
     {
