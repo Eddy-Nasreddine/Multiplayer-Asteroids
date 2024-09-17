@@ -187,13 +187,13 @@ PolygonCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: -0.40909094}
+    pivot: {x: 0.49515325, y: 0.45065162}
     oldSize: {x: 0.32, y: 0.22}
     newSize: {x: 0.32, y: 0.22}
     adaptiveTilingThreshold: 0.5
@@ -202,20 +202,15 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: -0.03, y: 0.31}
-      - {x: -0.033799887, y: 0.29723504}
-      - {x: -0.030345354, y: 0.27235693}
-      - {x: -0.0604996, y: 0.23487298}
-      - {x: -0.16, y: 0.19999999}
-      - {x: -0.16, y: 0.12}
-      - {x: -0.10085014, y: 0.089999996}
-      - {x: 0.07, y: 0.089999996}
-      - {x: 0.16, y: 0.13}
-      - {x: 0.16155002, y: 0.21723506}
-      - {x: 0.12274016, y: 0.20919617}
-      - {x: 0.05769421, y: 0.23062244}
-      - {x: 0.036052726, y: 0.26845267}
-      - {x: 0.03224986, y: 0.30861753}
+    - - {x: -0.028449038, y: 0.12085664}
+      - {x: -0.038449038, y: 0.110856645}
+      - {x: -0.15844904, y: 0.010856647}
+      - {x: -0.15844904, y: -0.06914335}
+      - {x: -0.08844904, y: -0.09914335}
+      - {x: 0.07155096, y: -0.09914335}
+      - {x: 0.16155095, y: -0.05914335}
+      - {x: 0.16155095, y: 0.030856647}
+      - {x: 0.04155096, y: 0.12085664}
   m_UseDelaunayMesh: 0
 --- !u!50 &488916330
 Rigidbody2D:
@@ -258,11 +253,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   acceleration: 10
   maxVelocity: 10
-  rb: {fileID: 0}
   rotationSpeed: 720
-  bulletspeed: 8
-  BulletSpawn: {fileID: 326978126}
-  bulletPrefab: {fileID: 3548258823847263933, guid: 3771f7f1cad3f264a8d9f498f1c7722e, type: 3}
 --- !u!114 &488916332
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -273,18 +264,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2fb7206596cbe8b49a1479cdb53e0149, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &488916333
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 488916328}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b9f1d90cf1d8314291467e1c440263f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!4 &488916335 stripped
@@ -304,6 +283,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6fe3098b58a36d54d83d0ff0a3f5937a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &488916339
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 488916328}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c20c104c84a457a4a8b66b612214f975, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  BulletSpawn: {fileID: 326978126}
+  bulletPrefab: {fileID: 3548258823847263933, guid: 3771f7f1cad3f264a8d9f498f1c7722e, type: 3}
+  bulletspeed: 8
 --- !u!1 &1013735855
 GameObject:
   m_ObjectHideFlags: 0
@@ -629,16 +623,16 @@ PrefabInstance:
       addedObject: {fileID: 488916331}
     - targetCorrespondingSourceObject: {fileID: -2253911629886400664, guid: f12a40cf558a304448711b48bac6ce76, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 488916337}
+    - targetCorrespondingSourceObject: {fileID: -2253911629886400664, guid: f12a40cf558a304448711b48bac6ce76, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 488916339}
+    - targetCorrespondingSourceObject: {fileID: -2253911629886400664, guid: f12a40cf558a304448711b48bac6ce76, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 488916330}
     - targetCorrespondingSourceObject: {fileID: -2253911629886400664, guid: f12a40cf558a304448711b48bac6ce76, type: 3}
       insertIndex: -1
       addedObject: {fileID: 488916329}
-    - targetCorrespondingSourceObject: {fileID: -2253911629886400664, guid: f12a40cf558a304448711b48bac6ce76, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 488916333}
-    - targetCorrespondingSourceObject: {fileID: -2253911629886400664, guid: f12a40cf558a304448711b48bac6ce76, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 488916337}
   m_SourcePrefab: {fileID: -8435245712485981826, guid: f12a40cf558a304448711b48bac6ce76, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
