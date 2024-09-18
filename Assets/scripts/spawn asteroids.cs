@@ -119,8 +119,7 @@ public class SpawnAsteroids : MonoBehaviour
 
         roid1.GetComponent<rotate>().dead = 2;
         roid2.GetComponent<rotate>().dead = 2;
-        roid1.GetComponent<CircleCollider2D>().enabled = false;
-        roid2.GetComponent<CircleCollider2D>().enabled = false;
+ 
 
         roid1.transform.localScale = roid1.transform.localScale / 1.5f;
         roid2.transform.localScale = roid2.transform.localScale / 1.5f;
@@ -138,25 +137,35 @@ public class SpawnAsteroids : MonoBehaviour
 
         for (int i = 0; i < AsteroidsAmount; i++)
         {
-            GameObject roid = GameObject.Instantiate(asteroidObj);
-            float speed = UnityEngine.Random.Range(SpeedMin, SpeedMax);
-            Vector3 pos = RandomLocationOffScreen();
-
-
-            roid.transform.position = Camera.main.ViewportToWorldPoint(pos);
-            Vector2 velocity = RandomValidVelocity(pos);
-
-
-            Rigidbody2D rb = roid.GetComponent<Rigidbody2D>();
-            rb.velocity = velocity * speed;
-            asteroids.Add(new AsteroidData(roid));
-
+            AddAstroid();
         }
     }
+    void AddAstroid()
+    {
+        GameObject roid = GameObject.Instantiate(asteroidObj);
+        float speed = UnityEngine.Random.Range(SpeedMin, SpeedMax);
+        Vector3 pos = RandomLocationOffScreen();
 
+
+        roid.transform.position = Camera.main.ViewportToWorldPoint(pos);
+        Vector2 velocity = RandomValidVelocity(pos);
+
+
+        Rigidbody2D rb = roid.GetComponent<Rigidbody2D>();
+        rb.velocity = velocity * speed;
+        asteroids.Add(new AsteroidData(roid));
+    }
     // Update is called once per frame
     void Update()
     {
+        if (asteroids.Count <= 5)
+        {   
+            int random_roid_amount = UnityEngine.Random.Range(0, 3);
+            for (int i = 0;i < random_roid_amount; i++)
+            {
+                AddAstroid();
+            }
+        }
         //bug if a asteroid spawns outside and then gets bumped by another befor it gos in the screen it will drift off screen forever
         for (int i = 0; i < asteroids.Count; i++)
         {
@@ -167,10 +176,17 @@ public class SpawnAsteroids : MonoBehaviour
             int dead = roid.GetComponent<rotate>().dead;
             if (dead == 1)
             {
-                roid.GetComponent<rotate>().dead = 0;
                 asteroids.AddRange(SplitAsteroid(roid));
-                //UnityEngine.Object.Destroy(roid);
-                //asteroids.RemoveAt(i);
+                UnityEngine.Object.Destroy(roid);
+                asteroids.RemoveAt(i);
+                i--;
+                continue;
+            }
+            else if (dead == 3) {
+                Debug.Log("ben");
+                UnityEngine.Object.Destroy(roid);
+                asteroids.RemoveAt(i);
+                i--;
                 continue;
             }
 

@@ -6,6 +6,7 @@ public class playermovement : MonoBehaviour
 {
     [SerializeField] private float acceleration = 10f;
     [SerializeField] private float maxVelocity = 10f;
+    public Animator animator;
     private Rigidbody2D rb;
     [SerializeField] private float rotationSpeed = 180f;
     private bool isAccelerating = false;
@@ -28,16 +29,26 @@ public class playermovement : MonoBehaviour
     {
         if (isAccelerating)
         {
+            animator.SetBool("isAccelerating", true);
             rb.AddForce(acceleration * transform.up);
             rb.velocity = Vector2.ClampMagnitude(rb.velocity, maxVelocity);
 
         }
         else {
-
+            animator.SetBool("isAccelerating", false);
             rb.velocity = rb.velocity / 1.05f;
 
         }
     }
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        Debug.Log("yaya1");
+        if (collision.CompareTag("asteroid"));
+        {
+            Destroy(gameObject);
+        }
+    }
+
     private void shipAcceleration()
     {
         isAccelerating = Input.GetKey(KeyCode.W);

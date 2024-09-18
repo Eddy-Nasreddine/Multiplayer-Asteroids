@@ -23,13 +23,11 @@ public class rotate : MonoBehaviour
         transform.Rotate(0.0f, 0.0f, rotation, Space.World);
     }
 
-    void OnCollisionEnter2D(Collision2D collision)
+    void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.GetComponent<rotate>().dead == 2) return;
-        if (dead == 2) return;
-
-
-        dead = 1;
+        if (collision.CompareTag("bullet")){
+            dead++;
+        }
     }
 
 
