@@ -16,7 +16,7 @@ using Vector4 = UnityEngine.Vector4;
 
 
 
-public class moveasteroid : MonoBehaviour
+public class SpawnAsteroids : MonoBehaviour
 {
     public float SpeedMin = 0.5f;
     public float SpeedMax = 7f;
