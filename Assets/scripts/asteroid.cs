@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using UnityEditor.UI;
 using UnityEngine;
 
-public class rotate : MonoBehaviour
+public class Asteroid : MonoBehaviour
 {
     private int rotationDirection;
     private float rotationSpeed;
     [HideInInspector]
-    public int dead = 0; // 0 dead  1 alive  2 ignore
+    public bool dead = false;
+    public int split = 0;
     // Start is called before the first frame update
     void Start()
     {
@@ -26,7 +27,7 @@ public class rotate : MonoBehaviour
     void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("bullet")){
-            dead++;
+            dead = true;
         }
     }
 

@@ -6,6 +6,7 @@ using System.Numerics;
 using System.Security.Cryptography;
 using Unity.VisualScripting;
 using UnityEditor;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.Profiling;
 using static UnityEngine.GridBrushBase;
@@ -21,6 +22,7 @@ public class SpawnAsteroids : MonoBehaviour
     public float SpeedMin = 0.5f;
     public float SpeedMax = 7f;
     public int AsteroidsAmount = 10;
+    public int MaxSplits = 3;
 
     public GameObject asteroidObj;
     private List<AsteroidData> asteroids = new List<AsteroidData> { };
@@ -96,6 +98,12 @@ public class SpawnAsteroids : MonoBehaviour
 
     List<AsteroidData> SplitAsteroid(GameObject asteroid)
     {
+        int parentSplit = asteroid.GetComponent<Asteroid>().split;
+        if (parentSplit == MaxSplits)
+        {
+            return new List<AsteroidData> { };
+        }
+
         Vector2 pos = asteroid.transform.position;
         float rotationradians = (asteroid.transform.rotation.eulerAngles.z % 360) * Mathf.Deg2Rad;
         float rotationRight = rotationradians + (Mathf.PI / 2);
@@ -104,7 +112,7 @@ public class SpawnAsteroids : MonoBehaviour
         Vector2 leftVec = new Vector2(Mathf.Cos(rotationLeft), Mathf.Sin(rotationLeft));
 
         Vector2 size = asteroid.GetComponent<Renderer>().bounds.size / 1.5f;
-
+        print(size);
         GameObject roid1 = GameObject.Instantiate(asteroidObj);
         roid1.transform.position = (leftVec * (size / 5) ) + pos;
         Rigidbody2D rb = roid1.GetComponent<Rigidbody2D>();
@@ -117,15 +125,27 @@ public class SpawnAsteroids : MonoBehaviour
         speed = UnityEngine.Random.Range(SpeedMin, SpeedMax);
         rb.velocity = rightVec * speed;
 
-        roid1.GetComponent<rotate>().dead = 2;
-        roid2.GetComponent<rotate>().dead = 2;
- 
+        int split = parentSplit + 1;
 
-        roid1.transform.localScale = roid1.transform.localScale / 1.5f;
-        roid2.transform.localScale = roid2.transform.localScale / 1.5f;
+        roid1.GetComponent<Asteroid>().split = split;
+        roid2.GetComponent<Asteroid>().split = split;
 
-        roid1.GetComponent<SpriteRenderer>().material.color = Color.black;
-        roid2.GetComponent<SpriteRenderer>().color = Color.black;
+
+        roid1.transform.localScale = roid1.transform.localScale / (1.5f * (split));
+        roid2.transform.localScale = roid2.transform.localScale / (1.5f * (split));
+
+        Dictionary<int, Color> colors = new Dictionary<int, Color>()
+        {
+            {0, Color.red },
+            {1, Color.green},
+            {2, Color.blue},
+            {3, Color.yellow},
+            {4, Color.black}
+        };
+
+
+        roid1.GetComponent<SpriteRenderer>().color = colors[split];
+        roid2.GetComponent<SpriteRenderer>().color = colors[split];
 
         return new List<AsteroidData> { new AsteroidData(roid1,1), new AsteroidData(roid2,1) };
     }
@@ -173,17 +193,10 @@ public class SpawnAsteroids : MonoBehaviour
 
             Vector3 size = roid.GetComponent<Renderer>().bounds.size;
             Vector3 pos = Camera.main.WorldToViewportPoint(roid.transform.position);
-            int dead = roid.GetComponent<rotate>().dead;
-            if (dead == 1)
+            bool dead = roid.GetComponent<Asteroid>().dead;
+            if (dead)
             {
                 asteroids.AddRange(SplitAsteroid(roid));
-                UnityEngine.Object.Destroy(roid);
-                asteroids.RemoveAt(i);
-                i--;
-                continue;
-            }
-            else if (dead == 3) {
-                Debug.Log("ben");
                 UnityEngine.Object.Destroy(roid);
                 asteroids.RemoveAt(i);
                 i--;
@@ -192,16 +205,16 @@ public class SpawnAsteroids : MonoBehaviour
 
             if (asteroids[i].state == 0) //dont despawn asteroids when they havent been on screen yet
             {
-                if (!(pos.x < 0 | pos.x > 1 | pos.y < 0 | pos.y > 1))
+                if (!(pos.x < 0 | pos.x > 1 | pos.y < 0 | pos.y > 1)) //if asteroid is on screen
                 {
                     asteroids[i].state = 1;
                 }
 
                 continue;
             }
-            if (pos.x < 0 | pos.x > 1 | pos.y < 0 | pos.y > 1)
+            if (pos.x < 0 | pos.x > 1 | pos.y < 0 | pos.y > 1)  //if asteroid is off screen
             {
-                if (asteroids[i].asteroid.GetComponent<rotate>().dead == 2)
+                if (asteroids[i].asteroid.GetComponent<Asteroid>().split != 0) //delete small split ateroids but respawn full ones
                 {
                     UnityEngine.Object.Destroy(roid);
                     asteroids.RemoveAt(i);

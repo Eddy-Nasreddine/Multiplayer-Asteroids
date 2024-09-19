@@ -42,7 +42,6 @@ public class playermovement : MonoBehaviour
     }
     void OnTriggerEnter2D(Collider2D collision)
     {
-        Debug.Log("yaya1");
         if (collision.CompareTag("asteroid"));
         {
             Destroy(gameObject);
