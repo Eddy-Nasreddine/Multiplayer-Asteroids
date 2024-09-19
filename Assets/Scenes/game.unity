@@ -253,6 +253,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   acceleration: 10
   maxVelocity: 10
+  mouseControls: 0
   animator: {fileID: 488916341}
   rotationSpeed: 720
 --- !u!4 &488916335 stripped
@@ -487,19 +488,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: f12a40cf558a304448711b48bac6ce76, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.9999987
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: f12a40cf558a304448711b48bac6ce76, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: f12a40cf558a304448711b48bac6ce76, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: f12a40cf558a304448711b48bac6ce76, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.0016510484
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: f12a40cf558a304448711b48bac6ce76, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -511,7 +512,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: f12a40cf558a304448711b48bac6ce76, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: -360.189
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

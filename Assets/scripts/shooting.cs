@@ -28,7 +28,7 @@ public class shooting : MonoBehaviour
 
     private void ShootBullets()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) | Input.GetKeyDown(KeyCode.Mouse0))
         {
             Rigidbody2D bullet = Instantiate(bulletPrefab, BulletSpawn.position, BulletSpawn.rotation);
             bullet.transform.Rotate(0, 0, -90);

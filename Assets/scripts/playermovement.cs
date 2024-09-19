@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,6 +7,7 @@ public class playermovement : MonoBehaviour
 {
     [SerializeField] private float acceleration = 10f;
     [SerializeField] private float maxVelocity = 10f;
+    [SerializeField] private bool mouseControls = true;
     public Animator animator;
     private Rigidbody2D rb;
     [SerializeField] private float rotationSpeed = 180f;
@@ -55,14 +57,39 @@ public class playermovement : MonoBehaviour
 
     private void shipRotation()
     {
-        if (Input.GetKey(KeyCode.A)) {
-            transform.Rotate(0f,0f,1f, Space.World);
-        } else if (Input.GetKey(KeyCode.D))
+        if (mouseControls == false)
         {
-            transform.Rotate(0f, 0f, -1f, Space.World);
+            if (Input.GetKey(KeyCode.A))
+            {
+                transform.Rotate(0f, 0f, 1f, Space.World);
+            }
+            else if (Input.GetKey(KeyCode.D))
+            {
+                transform.Rotate(0f, 0f, -1f, Space.World);
+            }
         }
+        else if (mouseControls == true)
+        {
+            Vector3 mousepos = Input.mousePosition;
+            mousepos.z = 0f;
+            if (!(mousepos.x < 0 | mousepos.x > Screen.width | mousepos.y < 0 | mousepos.y > Screen.height)) //if mouse pos is on screen
+            {
+                Vector3 mousePosWorld = Camera.main.ScreenToWorldPoint(mousepos);
+                //print("mousepos: " + Camera.main.ScreenToWorldPoint(mousepos) + "  ship pos: " + transform.position);
+                float deltaX = mousePosWorld.x - transform.position.x;
+                float deltaY = mousePosWorld.y - transform.position.y;
+                float angle = (Mathf.Atan2(deltaY, deltaX) * Mathf.Rad2Deg);
 
+                float z = transform.rotation.eulerAngles.z;
+                float angleWorldSpace = (((angle + 90f - z + 360) % 360) - 180f);
+                print(angleWorldSpace);
+                float turnDirection = Math.Sign(angleWorldSpace);
+                //print(turnDirection);
+                if (Math.Abs(angleWorldSpace) > 1)
+                {
+                    transform.Rotate(0f, 0f, turnDirection, Space.World);
+                }
+            }
+        }
     }
-
-    
 }

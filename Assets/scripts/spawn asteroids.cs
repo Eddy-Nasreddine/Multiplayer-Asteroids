@@ -84,9 +84,9 @@ public class SpawnAsteroids : MonoBehaviour
         Vector2 worldpos = Camera.main.ViewportToWorldPoint(pos);
         float targetx = UnityEngine.Random.Range(0.1f, 0.9f);
         float targety = UnityEngine.Random.Range(0.1f, 0.9f);
-        Vector2 cornorpos = Camera.main.ViewportToWorldPoint(new Vector2(targetx, targety));
-        float deltaX = cornorpos.x - worldpos.x;
-        float deltaY = cornorpos.y - worldpos.y;
+        Vector2 targetpos = Camera.main.ViewportToWorldPoint(new Vector2(targetx, targety));
+        float deltaX = targetpos.x - worldpos.x;
+        float deltaY = targetpos.y - worldpos.y;
         float angle = Mathf.Atan2(deltaY, deltaX);
 
         float xVelocity = Mathf.Cos(angle);
