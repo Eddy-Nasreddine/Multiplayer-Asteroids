@@ -10,7 +10,6 @@ public class shooting : MonoBehaviour
 
     private Rigidbody2D rb;
 
-    [SerializeField] private Transform BulletSpawn;
     [SerializeField] private Rigidbody2D bulletPrefab;
     [SerializeField] private float bulletspeed = 8f;
 
@@ -30,7 +29,7 @@ public class shooting : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space) | Input.GetKeyDown(KeyCode.Mouse0))
         {
-            Rigidbody2D bullet = Instantiate(bulletPrefab, BulletSpawn.position, BulletSpawn.rotation);
+            Rigidbody2D bullet = Instantiate(bulletPrefab, transform.position, transform.rotation);
             bullet.transform.Rotate(0, 0, -90);
             Vector2 shipVelocity = rb.velocity;
             Vector2 shipDirection = transform.up;

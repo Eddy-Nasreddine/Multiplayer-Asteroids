@@ -10,7 +10,8 @@ public class playermovement : MonoBehaviour
     [SerializeField] private bool mouseControls = true;
     public Animator animator;
     private Rigidbody2D rb;
-    [SerializeField] private float rotationSpeed = 180f;
+    [Range(180f, 720f)]
+    [SerializeField] private float rotationSpeed = 0.5f;
     private bool isAccelerating = false;
     // Start is called before the first frame update
 
@@ -44,7 +45,7 @@ public class playermovement : MonoBehaviour
     }
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("asteroid"));
+        if (collision.CompareTag("asteroid"))
         {
             Destroy(gameObject);
         }
@@ -80,15 +81,15 @@ public class playermovement : MonoBehaviour
                 float deltaY = mousePosWorld.y - transform.position.y;
                 float angle = (Mathf.Atan2(deltaY, deltaX) * Mathf.Rad2Deg);
 
-                float z = transform.rotation.eulerAngles.z;
-                float angleWorldSpace = (((angle + 90f - z + 360) % 360) - 180f);
+                float shipAngle = transform.rotation.eulerAngles.z;
+                float angleWorldSpace = (((angle + 90f - shipAngle + 360) % 360) - 180f);
                 print(angleWorldSpace);
                 float turnDirection = Math.Sign(angleWorldSpace);
                 //print(turnDirection);
-                if (Math.Abs(angleWorldSpace) > 1)
+                if (Math.Abs(angleWorldSpace) > 0.5f)
                 {
-                    transform.Rotate(0f, 0f, turnDirection, Space.World);
-                }
+                    transform.Rotate(0f, 0f, turnDirection * rotationSpeed * Time.deltaTime, Space.World);
+                } 
             }
         }
     }

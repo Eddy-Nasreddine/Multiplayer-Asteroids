@@ -35,7 +35,7 @@ public class SpawnAsteroids : MonoBehaviour
         public GameObject asteroid;
         public int state = 0;  // 0 = entering screen  1 = onscreen
         public int split = 0;
-
+        public int age = 0;
         public AsteroidData(GameObject roid, int splited = 0)
         {
             asteroid = roid;
@@ -154,7 +154,7 @@ public class SpawnAsteroids : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        InvokeRepeating("CleanUpDeadAsteroids", 5f, 5f);
         for (int i = 0; i < AsteroidsAmount; i++)
         {
             AddAstroid();
@@ -175,10 +175,42 @@ public class SpawnAsteroids : MonoBehaviour
         rb.velocity = velocity * speed;
         asteroids.Add(new AsteroidData(roid));
     }
+
+    int CountBigAsteroids()
+    {
+        int count = 0;
+        for (int i = 0;i < asteroids.Count; i++)
+        {
+            if (asteroids[i].split == 0)
+            {
+                count++;
+            }
+        }
+        return count;
+    }
+    void CleanUpDeadAsteroids() //cleans up asteroids are old and not on screen 
+    {
+        for (int i = 0; i < asteroids.Count; i++)
+        {
+            asteroids[i].age += 5;
+            if (asteroids[i].age >= 20)
+            {
+                Vector2 pos = asteroids[i].asteroid.transform.position;
+                if (pos.x < 0 | pos.x > 1 | pos.y < 0 | pos.y > 1)    //if age is greater than 20 and offscreen delete it
+                {
+                    UnityEngine.Object.Destroy(asteroids[i].asteroid);
+                    asteroids.RemoveAt(i);
+                    i--;
+                }
+            }
+
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
-        if (asteroids.Count <= 5)
+        if (CountBigAsteroids() <= 5)
         {   
             int random_roid_amount = UnityEngine.Random.Range(0, 3);
             for (int i = 0;i < random_roid_amount; i++)
@@ -220,6 +252,7 @@ public class SpawnAsteroids : MonoBehaviour
                     asteroids.RemoveAt(i);
                     continue;
                 }
+                asteroids[i].age = 0;
                 asteroids[i].state = 0;
                 pos = RandomLocationOffScreen();
                 Vector2 velocity = RandomValidVelocity(pos);
