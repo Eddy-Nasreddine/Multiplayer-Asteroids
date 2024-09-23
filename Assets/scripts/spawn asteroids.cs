@@ -10,6 +10,7 @@ using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.Profiling;
 using static UnityEngine.GridBrushBase;
+using TMPro;
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
 using Vector4 = UnityEngine.Vector4;
@@ -21,13 +22,13 @@ public class SpawnAsteroids : MonoBehaviour
 {
     public float SpeedMin = 0.5f;
     public float SpeedMax = 7f;
-    public int AsteroidsAmount = 10;
+    public int AsteroidsAmount = 1;
     public int MaxSplits = 3;
-
+    public int points = 0;
     public GameObject asteroidObj;
     private List<AsteroidData> asteroids = new List<AsteroidData> { };
-
-
+    public TextMeshProUGUI currentPoints;
+    public playermovement playermovement;
 
 
     private class AsteroidData
@@ -43,7 +44,10 @@ public class SpawnAsteroids : MonoBehaviour
         }
     }
 
-
+    public int getPoints()
+    {
+        return points;
+    }
 
     Vector3 RandomLocationOffScreen()
     {
@@ -99,6 +103,14 @@ public class SpawnAsteroids : MonoBehaviour
     List<AsteroidData> SplitAsteroid(GameObject asteroid)
     {
         int parentSplit = asteroid.GetComponent<Asteroid>().split;
+
+        if (parentSplit == 0)      // Large asteroid
+            points += 10;
+        else if (parentSplit == 1) // Medium asteroid
+            points += 50;
+        else if (parentSplit == 2) // Small asteroid
+            points += 100;
+
         if (parentSplit == MaxSplits)
         {
             return new List<AsteroidData> { };
@@ -154,11 +166,9 @@ public class SpawnAsteroids : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        InvokeRepeating("CleanUpDeadAsteroids", 5f, 5f);
-        for (int i = 0; i < AsteroidsAmount; i++)
-        {
-            AddAstroid();
-        }
+  
+     AddAstroid();
+        
     }
     void AddAstroid()
     {
@@ -218,6 +228,12 @@ public class SpawnAsteroids : MonoBehaviour
                 AddAstroid();
             }
         }
+        // I think if you shoot bullets after you die they still count for points so this SHOULD fix that..
+        if (!playermovement.isPlayerDead)
+        {
+            currentPoints.text = points + " POINTS";
+        }
+
         //bug if a asteroid spawns outside and then gets bumped by another befor it gos in the screen it will drift off screen forever
         for (int i = 0; i < asteroids.Count; i++)
         {

@@ -13,6 +13,9 @@ public class playermovement : MonoBehaviour
     [Range(180f, 720f)]
     [SerializeField] private float rotationSpeed = 0.5f;
     private bool isAccelerating = false;
+    public GameOver gameover;
+    public SpawnAsteroids spawnAsteroids;
+    public bool isPlayerDead = false;
     // Start is called before the first frame update
 
     
@@ -48,6 +51,8 @@ public class playermovement : MonoBehaviour
         if (collision.CompareTag("asteroid"))
         {
             Destroy(gameObject);
+            gameover.Setup(spawnAsteroids.getPoints());
+            isPlayerDead = true;
         }
     }
 

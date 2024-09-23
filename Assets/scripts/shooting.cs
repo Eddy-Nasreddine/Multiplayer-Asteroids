@@ -2,16 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-
-
-public class shooting : MonoBehaviour
+public class Shooting : MonoBehaviour
 {
-
     private Rigidbody2D rb;
 
     [SerializeField] private Rigidbody2D bulletPrefab;
-    [SerializeField] private float bulletspeed = 8f;
+    [SerializeField] private float bulletSpeed = 8f;
+    [SerializeField] private float fireRate = 0.2f;  // Time between shots when holding space
+
+    private float nextFireTime = 0f;  // Tracks when the next bullet can be fired
+    public AudioSource source;
+    public AudioClip firingClip;
 
     // Start is called before the first frame update
     void Start()
@@ -27,23 +28,37 @@ public class shooting : MonoBehaviour
 
     private void ShootBullets()
     {
-        if (Input.GetKeyDown(KeyCode.Space) | Input.GetKeyDown(KeyCode.Mouse0))
+        // Mouse button fires once per click
+        if (Input.GetKeyDown(KeyCode.Mouse0))
         {
-            Rigidbody2D bullet = Instantiate(bulletPrefab, transform.position, transform.rotation);
-            bullet.transform.Rotate(0, 0, -90);
-            Vector2 shipVelocity = rb.velocity;
-            Vector2 shipDirection = transform.up;
-            float shipSpeed = Vector2.Dot(shipVelocity, shipDirection);
-            Debug.Log(shipVelocity + " " + shipDirection + " DOT:" + shipSpeed);
-            if (shipSpeed < 0)
-            {
-                shipSpeed = 0;
-            }
-            bullet.velocity = shipDirection * shipSpeed;
-            bullet.AddForce(bulletspeed * transform.up, ForceMode2D.Impulse);
-            print("shooot");
+            FireBullet();
+        }
+
+        // Space fires continuously with a fire rate limit
+        if (Input.GetKey(KeyCode.Space) && Time.time >= nextFireTime)
+        {
+            nextFireTime = Time.time + fireRate;  // Update next fire time based on fire rate
+            FireBullet();
         }
     }
 
+    private void FireBullet()
+    {
+        source.clip = firingClip;
+        source.Play();
+        Rigidbody2D bullet = Instantiate(bulletPrefab, transform.position, transform.rotation);
+        bullet.transform.Rotate(0, 0, -90);
+        Vector2 shipVelocity = rb.velocity;
+        Vector2 shipDirection = transform.up;
+        float shipSpeed = Vector2.Dot(shipVelocity, shipDirection);
 
+        if (shipSpeed < 0)
+        {
+            shipSpeed = 0;
+        }
+
+        bullet.velocity = shipDirection * shipSpeed;
+        bullet.AddForce(bulletSpeed * transform.up, ForceMode2D.Impulse);
+
+    }
 }
