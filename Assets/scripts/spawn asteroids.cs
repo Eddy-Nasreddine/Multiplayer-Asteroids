@@ -28,7 +28,7 @@ public class SpawnAsteroids : MonoBehaviour
     public GameObject asteroidObj;
     private List<AsteroidData> asteroids = new List<AsteroidData> { };
     public TextMeshProUGUI currentPoints;
-    public playermovement playermovement;
+    public PlayerMovement playermovement;
 
 
     private class AsteroidData

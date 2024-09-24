@@ -1,9 +1,8 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class playermovement : MonoBehaviour
+public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private float acceleration = 10f;
     [SerializeField] private float maxVelocity = 10f;
@@ -16,21 +15,29 @@ public class playermovement : MonoBehaviour
     public GameOver gameover;
     public SpawnAsteroids spawnAsteroids;
     public bool isPlayerDead = false;
-    // Start is called before the first frame update
 
-    
+    // References to life images on the canvas
+    public Image[] lifeImages;
+    private int currentLives;
+
+    // Reference to the SpriteRenderer for changing the ship's color
+    private SpriteRenderer spriteRenderer;
+    public Color hitColor = Color.red; // Color when hit (red)
+    public float blinkDuration = 0.2f; // Time to stay red
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>(); // Get the SpriteRenderer component
+        currentLives = lifeImages.Length; // Set current lives to the number of life images
     }
 
-    // Update is called once per frame
     void Update()
     {
-        shipAcceleration();
-        shipRotation();
+        ShipAcceleration();
+        ShipRotation();
     }
+
     private void FixedUpdate()
     {
         if (isAccelerating)
@@ -38,32 +45,31 @@ public class playermovement : MonoBehaviour
             animator.SetBool("isAccelerating", true);
             rb.AddForce(acceleration * transform.up);
             rb.velocity = Vector2.ClampMagnitude(rb.velocity, maxVelocity);
-
         }
-        else {
+        else
+        {
             animator.SetBool("isAccelerating", false);
-            rb.velocity = rb.velocity / 1.05f;
-
+            rb.velocity /= 1.05f;
         }
     }
+
     void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("asteroid"))
         {
-            Destroy(gameObject);
-            gameover.Setup(spawnAsteroids.getPoints());
-            isPlayerDead = true;
+            HandleLifeLoss();
+            StartCoroutine(BlinkRed()); // Start blinking red on hit
         }
     }
 
-    private void shipAcceleration()
+    private void ShipAcceleration()
     {
         isAccelerating = Input.GetKey(KeyCode.W);
     }
 
-    private void shipRotation()
+    private void ShipRotation()
     {
-        if (mouseControls == false)
+        if (!mouseControls)
         {
             if (Input.GetKey(KeyCode.A))
             {
@@ -74,28 +80,59 @@ public class playermovement : MonoBehaviour
                 transform.Rotate(0f, 0f, -1f, Space.World);
             }
         }
-        else if (mouseControls == true)
+        else
         {
-            Vector3 mousepos = Input.mousePosition;
-            mousepos.z = 0f;
-            if (!(mousepos.x < 0 | mousepos.x > Screen.width | mousepos.y < 0 | mousepos.y > Screen.height)) //if mouse pos is on screen
+            Vector3 mousePos = Input.mousePosition;
+            mousePos.z = 0f;
+            if (mousePos.x >= 0 && mousePos.x <= Screen.width && mousePos.y >= 0 && mousePos.y <= Screen.height)
             {
-                Vector3 mousePosWorld = Camera.main.ScreenToWorldPoint(mousepos);
-                //print("mousepos: " + Camera.main.ScreenToWorldPoint(mousepos) + "  ship pos: " + transform.position);
+                Vector3 mousePosWorld = Camera.main.ScreenToWorldPoint(mousePos);
                 float deltaX = mousePosWorld.x - transform.position.x;
                 float deltaY = mousePosWorld.y - transform.position.y;
-                float angle = (Mathf.Atan2(deltaY, deltaX) * Mathf.Rad2Deg);
+                float angle = Mathf.Atan2(deltaY, deltaX) * Mathf.Rad2Deg;
 
                 float shipAngle = transform.rotation.eulerAngles.z;
                 float angleWorldSpace = (((angle + 90f - shipAngle + 360) % 360) - 180f);
-                print(angleWorldSpace);
-                float turnDirection = Math.Sign(angleWorldSpace);
-                //print(turnDirection);
-                if (Math.Abs(angleWorldSpace) > 0.5f)
+                float turnDirection = Mathf.Sign(angleWorldSpace);
+
+                if (Mathf.Abs(angleWorldSpace) > 0.5f)
                 {
                     transform.Rotate(0f, 0f, turnDirection * rotationSpeed * Time.deltaTime, Space.World);
-                } 
+                }
             }
         }
+    }
+
+    private void HandleLifeLoss()
+    {
+        currentLives--;
+        if (currentLives >= 0)
+        {
+            // Hide the life image corresponding to the current life count
+            lifeImages[currentLives].enabled = false;
+        }
+
+        if (currentLives <= 0)
+        {
+            Destroy(gameObject);
+            gameover.Setup(spawnAsteroids.getPoints());
+            isPlayerDead = true;
+        }
+    }
+
+    // Coroutine to make the ship blink red
+    private IEnumerator BlinkRed()
+    {
+        // Store the original color of the ship
+        Color originalColor = spriteRenderer.color;
+
+        // Change the color to red
+        spriteRenderer.color = hitColor;
+
+        // Wait for the blink duration
+        yield return new WaitForSeconds(blinkDuration);
+
+        // Revert the color back to the original
+        spriteRenderer.color = originalColor;
     }
 }
