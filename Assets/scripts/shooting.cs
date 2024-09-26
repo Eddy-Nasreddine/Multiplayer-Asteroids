@@ -41,7 +41,9 @@ public class Shooting : MonoBehaviour
             nextFireTime = Time.time + fireRate; // Update next fire time based on fire rate
 
             SoundFxManger.instance.PlaySoundFXClip(firingClip, transform);
-            Rigidbody2D bullet = Instantiate(bulletPrefab, transform.position, transform.rotation);
+            Vector3 pos = transform.position;
+            pos.z = 1f; //so bullets are draw under the ship
+            Rigidbody2D bullet = Instantiate(bulletPrefab, pos, transform.rotation);
             bullet.transform.Rotate(0, 0, -90);
             Vector2 shipVelocity = rb.velocity;
             Vector2 shipDirection = transform.up;
