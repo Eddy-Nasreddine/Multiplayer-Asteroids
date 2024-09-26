@@ -87,13 +87,19 @@ public class playermovement : MonoBehaviour
                 float angle = (Mathf.Atan2(deltaY, deltaX) * Mathf.Rad2Deg);
 
                 float shipAngle = transform.rotation.eulerAngles.z;
-                float angleWorldSpace = (((angle + 90f - shipAngle + 360) % 360) - 180f);
+                float angleWorldSpace = (((angle + 90f - shipAngle + 360) % 360) - 180f); //degrees to turn to face the mouse but normalized to unitys rotation and the ships rotation
                 //print(angleWorldSpace);
                 float turnDirection = Math.Sign(angleWorldSpace);
                 //print(turnDirection);
-                if (Math.Abs(angleWorldSpace) > 0.5f)
+
+                float TurnDistance = turnDirection * rotationSpeed * Time.deltaTime;
+                if (Math.Abs(angleWorldSpace) < Math.Abs(TurnDistance))
                 {
-                    transform.Rotate(0f, 0f, turnDirection * rotationSpeed * Time.deltaTime, Space.World);
+                    print("ez");
+                    transform.Rotate(0f, 0f, angleWorldSpace, Space.World);
+                }else
+                {
+                    transform.Rotate(0f, 0f, TurnDistance, Space.World);
                 } 
             }
         }
