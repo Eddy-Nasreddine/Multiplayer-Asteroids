@@ -88,7 +88,7 @@ public class playermovement : MonoBehaviour
 
                 float shipAngle = transform.rotation.eulerAngles.z;
                 float angleWorldSpace = (((angle + 90f - shipAngle + 360) % 360) - 180f);
-                print(angleWorldSpace);
+                //print(angleWorldSpace);
                 float turnDirection = Math.Sign(angleWorldSpace);
                 //print(turnDirection);
                 if (Math.Abs(angleWorldSpace) > 0.5f)

@@ -11,7 +11,6 @@ public class Shooting : MonoBehaviour
     [SerializeField] private float fireRate = 0.2f;  // Time between shots when holding space
 
     private float nextFireTime = 0f;  // Tracks when the next bullet can be fired
-    public AudioSource source;
     public AudioClip firingClip;
 
     // Start is called before the first frame update
@@ -37,6 +36,8 @@ public class Shooting : MonoBehaviour
         // Space fires continuously with a fire rate limit
         if (Input.GetKey(KeyCode.Space) && Time.time >= nextFireTime)
         {
+            print("time: " + Time.time);
+            print("fireTime: " + nextFireTime);
             nextFireTime = Time.time + fireRate;  // Update next fire time based on fire rate
             FireBullet();
         }
@@ -44,8 +45,7 @@ public class Shooting : MonoBehaviour
 
     private void FireBullet()
     {
-        source.clip = firingClip;
-        source.Play();
+        SoundFxManger.instance.PlaySoundFXClip(firingClip, transform);
         Rigidbody2D bullet = Instantiate(bulletPrefab, transform.position, transform.rotation);
         bullet.transform.Rotate(0, 0, -90);
         Vector2 shipVelocity = rb.velocity;
