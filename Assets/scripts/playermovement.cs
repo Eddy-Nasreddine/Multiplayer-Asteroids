@@ -95,7 +95,6 @@ public class playermovement : MonoBehaviour
                 float TurnDistance = turnDirection * rotationSpeed * Time.deltaTime;
                 if (Math.Abs(angleWorldSpace) < Math.Abs(TurnDistance))
                 {
-                    print("ez");
                     transform.Rotate(0f, 0f, angleWorldSpace, Space.World);
                 }else
                 {

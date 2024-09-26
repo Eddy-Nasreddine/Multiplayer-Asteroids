@@ -27,38 +27,33 @@ public class Shooting : MonoBehaviour
 
     private void ShootBullets()
     {
-        // Mouse button fires once per click
-        if (Input.GetKeyDown(KeyCode.Mouse0))
+        // Fire continuously with a fire rate limit
+        if (Input.GetKey(KeyCode.Mouse0) || Input.GetKey(KeyCode.Space))
         {
-            FireBullet();
-        }
-
-        // Space fires continuously with a fire rate limit
-        if (Input.GetKey(KeyCode.Space) && Time.time >= nextFireTime)
-        {
-            print("time: " + Time.time);
-            print("fireTime: " + nextFireTime);
-            nextFireTime = Time.time + fireRate;  // Update next fire time based on fire rate
             FireBullet();
         }
     }
 
     private void FireBullet()
     {
-        SoundFxManger.instance.PlaySoundFXClip(firingClip, transform);
-        Rigidbody2D bullet = Instantiate(bulletPrefab, transform.position, transform.rotation);
-        bullet.transform.Rotate(0, 0, -90);
-        Vector2 shipVelocity = rb.velocity;
-        Vector2 shipDirection = transform.up;
-        float shipSpeed = Vector2.Dot(shipVelocity, shipDirection);
-
-        if (shipSpeed < 0)
+        if (Time.time >= nextFireTime)
         {
-            shipSpeed = 0;
+            nextFireTime = Time.time + fireRate; // Update next fire time based on fire rate
+
+            SoundFxManger.instance.PlaySoundFXClip(firingClip, transform);
+            Rigidbody2D bullet = Instantiate(bulletPrefab, transform.position, transform.rotation);
+            bullet.transform.Rotate(0, 0, -90);
+            Vector2 shipVelocity = rb.velocity;
+            Vector2 shipDirection = transform.up;
+            float shipSpeed = Vector2.Dot(shipVelocity, shipDirection);
+
+            if (shipSpeed < 0)
+            {
+                shipSpeed = 0;
+            }
+
+            bullet.velocity = shipDirection * shipSpeed;
+            bullet.AddForce(bulletSpeed * transform.up, ForceMode2D.Impulse);
         }
-
-        bullet.velocity = shipDirection * shipSpeed;
-        bullet.AddForce(bulletSpeed * transform.up, ForceMode2D.Impulse);
-
     }
 }
