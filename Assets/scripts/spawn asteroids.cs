@@ -126,13 +126,13 @@ public class SpawnAsteroids : MonoBehaviour
         Vector2 size = asteroid.GetComponent<Renderer>().bounds.size / 1.5f;
         //print(size);
         GameObject roid1 = GameObject.Instantiate(asteroidObj);
-        roid1.transform.position = (leftVec * (size / 5) ) + pos;
+        roid1.transform.position = (leftVec * (size / 2.3f)) + pos;
         Rigidbody2D rb = roid1.GetComponent<Rigidbody2D>();
         float speed = UnityEngine.Random.Range(SpeedMin, SpeedMax);
         rb.velocity = leftVec * speed;
 
         GameObject roid2 = GameObject.Instantiate(asteroidObj);
-        roid2.transform.position = (rightVec * (size / 5)) + pos;
+        roid2.transform.position = (rightVec * (size / 2.3f)) + pos;
         rb = roid2.GetComponent<Rigidbody2D>();
         speed = UnityEngine.Random.Range(SpeedMin, SpeedMax);
         rb.velocity = rightVec * speed;
@@ -237,7 +237,7 @@ public class SpawnAsteroids : MonoBehaviour
             currentPoints.text = points + " POINTS";
         }
 
-        //bug if a asteroid spawns outside and then gets bumped by another befor it gos in the screen it will drift off screen forever
+
         for (int i = 0; i < asteroids.Count; i++)
         {
             GameObject roid = asteroids[i].asteroid;
