@@ -554,7 +554,6 @@ MonoBehaviour:
   bulletPrefab: {fileID: 3548258823847263933, guid: 3771f7f1cad3f264a8d9f498f1c7722e, type: 3}
   bulletSpeed: 8
   fireRate: 0.001
-  source: {fileID: 1042545282}
   firingClip: {fileID: 8300000, guid: bd583534e85bfad4bbd969d27e5548af, type: 3}
 --- !u!95 &488916341
 Animator:
@@ -832,7 +831,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SpeedMin: 0.5
   SpeedMax: 3
-  AsteroidsAmount: 30
+  AsteroidsAmount: 5
   MaxSplits: 2
   points: 0
   asteroidObj: {fileID: 3420262306031705783, guid: 67fe60363c770804f99d3a3668650898, type: 3}

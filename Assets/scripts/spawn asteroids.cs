@@ -124,15 +124,15 @@ public class SpawnAsteroids : MonoBehaviour
         Vector2 leftVec = new Vector2(Mathf.Cos(rotationLeft), Mathf.Sin(rotationLeft));
 
         Vector2 size = asteroid.GetComponent<Renderer>().bounds.size / 1.5f;
-        print(size);
+        //print(size);
         GameObject roid1 = GameObject.Instantiate(asteroidObj);
-        roid1.transform.position = (leftVec * (size / 5) ) + pos;
+        roid1.transform.position = (leftVec * (size / 2.3f)) + pos;
         Rigidbody2D rb = roid1.GetComponent<Rigidbody2D>();
         float speed = UnityEngine.Random.Range(SpeedMin, SpeedMax);
         rb.velocity = leftVec * speed;
 
         GameObject roid2 = GameObject.Instantiate(asteroidObj);
-        roid2.transform.position = (rightVec * (size / 5)) + pos;
+        roid2.transform.position = (rightVec * (size / 2.3f)) + pos;
         rb = roid2.GetComponent<Rigidbody2D>();
         speed = UnityEngine.Random.Range(SpeedMin, SpeedMax);
         rb.velocity = rightVec * speed;
@@ -166,8 +166,11 @@ public class SpawnAsteroids : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-  
-     AddAstroid();
+        InvokeRepeating("CleanUpDeadAsteroids", 5f, 5f);
+        for (int i = 0; i < AsteroidsAmount; i++)
+        {
+            AddAstroid();
+        }
         
     }
     void AddAstroid()
@@ -203,9 +206,9 @@ public class SpawnAsteroids : MonoBehaviour
         for (int i = 0; i < asteroids.Count; i++)
         {
             asteroids[i].age += 5;
-            if (asteroids[i].age >= 20)
+            if (asteroids[i].age >= 5)
             {
-                Vector2 pos = asteroids[i].asteroid.transform.position;
+                Vector2 pos = Camera.main.WorldToViewportPoint(asteroids[i].asteroid.transform.position);
                 if (pos.x < 0 | pos.x > 1 | pos.y < 0 | pos.y > 1)    //if age is greater than 20 and offscreen delete it
                 {
                     UnityEngine.Object.Destroy(asteroids[i].asteroid);
@@ -234,7 +237,7 @@ public class SpawnAsteroids : MonoBehaviour
             currentPoints.text = points + " POINTS";
         }
 
-        //bug if a asteroid spawns outside and then gets bumped by another befor it gos in the screen it will drift off screen forever
+
         for (int i = 0; i < asteroids.Count; i++)
         {
             GameObject roid = asteroids[i].asteroid;
