@@ -110,6 +110,7 @@ public class PlayerMovement : MonoBehaviour
         {
             // Hide the life image corresponding to the current life count
             lifeImages[currentLives].enabled = false;
+            StartCoroutine(InvincibilityFrames(2.5f));
         }
 
         if (currentLives <= 0)
@@ -134,5 +135,15 @@ public class PlayerMovement : MonoBehaviour
 
         // Revert the color back to the original
         spriteRenderer.color = originalColor;
+    }
+
+    // Handles invinceibility after ship collides with an asteroid 
+    private IEnumerator InvincibilityFrames(float duration)
+    {
+        PolygonCollider2D polygon = GetComponent<PolygonCollider2D>();
+        polygon.enabled = false;
+        yield return new WaitForSeconds(duration);
+        polygon.enabled = true;
+
     }
 }
