@@ -1,6 +1,4 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,7 +15,6 @@ public class PlayerMovement : MonoBehaviour
     public GameOver gameover;
     public SpawnAsteroids spawnAsteroids;
     public bool isPlayerDead = false;
-    // Start is called before the first frame update
 
     // References to life images on the canvas
     public Image[] lifeImages;
@@ -35,12 +32,12 @@ public class PlayerMovement : MonoBehaviour
         currentLives = lifeImages.Length; // Set current lives to the number of life images
     }
 
-    // Update is called once per frame
     void Update()
     {
         ShipAcceleration();
         ShipRotation();
     }
+
     private void FixedUpdate()
     {
         if (isAccelerating)
@@ -48,7 +45,6 @@ public class PlayerMovement : MonoBehaviour
             animator.SetBool("isAccelerating", true);
             rb.AddForce(acceleration * transform.up);
             rb.velocity = Vector2.ClampMagnitude(rb.velocity, maxVelocity);
-
         }
         else
         {
@@ -56,6 +52,7 @@ public class PlayerMovement : MonoBehaviour
             rb.velocity /= 1.05f;
         }
     }
+
     void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("asteroid"))
@@ -72,7 +69,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void ShipRotation()
     {
-        if (mouseControls == false)
+        if (!mouseControls)
         {
             if (Input.GetKey(KeyCode.A))
             {
@@ -83,19 +80,27 @@ public class PlayerMovement : MonoBehaviour
                 transform.Rotate(0f, 0f, -1f, Space.World);
             }
         }
-        else if (mouseControls == true)
+        else
         {
-            Vector3 mousepos = Input.mousePosition;
-            mousepos.z = 0f;
-            if (!(mousepos.x < 0 | mousepos.x > Screen.width | mousepos.y < 0 | mousepos.y > Screen.height)) //if mouse pos is on screen
+            Vector3 mousePos = Input.mousePosition;
+            mousePos.z = 0f;
+            if (mousePos.x >= 0 && mousePos.x <= Screen.width && mousePos.y >= 0 && mousePos.y <= Screen.height)
             {
-                Vector3 mousePosWorld = Camera.main.ScreenToWorldPoint(mousepos);
-                //print("mousepos: " + Camera.main.ScreenToWorldPoint(mousepos) + "  ship pos: " + transform.position);
+                Vector3 mousePosWorld = Camera.main.ScreenToWorldPoint(mousePos);
                 float deltaX = mousePosWorld.x - transform.position.x;
                 float deltaY = mousePosWorld.y - transform.position.y;
-                float angle = (Mathf.Atan2(deltaY, deltaX) * Mathf.Rad2Deg);
+                float angle = Mathf.Atan2(deltaY, deltaX) * Mathf.Rad2Deg;
 
                 float shipAngle = transform.rotation.eulerAngles.z;
+<<<<<<< HEAD
+                float angleWorldSpace = (((angle + 90f - shipAngle + 360) % 360) - 180f);
+                float turnDirection = Mathf.Sign(angleWorldSpace);
+
+                if (Mathf.Abs(angleWorldSpace) > 0.5f)
+                {
+                    transform.Rotate(0f, 0f, turnDirection * rotationSpeed * Time.deltaTime, Space.World);
+                }
+=======
                 float angleWorldSpace = (((angle + 90f - shipAngle + 360) % 360) - 180f); //degrees to turn to face the mouse but normalized to unitys rotation and the ships rotation
                 //print(angleWorldSpace);
                 float turnDirection = Math.Sign(angleWorldSpace);
@@ -109,6 +114,7 @@ public class PlayerMovement : MonoBehaviour
                 {
                     transform.Rotate(0f, 0f, TurnDistance, Space.World);
                 } 
+>>>>>>> SoundFx-Manager-And-Misc-Cleanup
             }
         }
     }
